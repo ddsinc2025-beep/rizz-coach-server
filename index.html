@@ -571,9 +571,9 @@ async function handleImg(e) {
     show('imgPrev');
     if (!apiKey) { document.getElementById('imgStatus').textContent = '⚠️ Add API key in ⚙️ Settings first'; return; }
     try {
-      const r = await fetch('https://rizz-coach-server.onrender.com/coach', {
+      const r = await fetch('/coach', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 300,
@@ -613,9 +613,9 @@ async function analyze() {
   const dt = setInterval(() => { document.getElementById('loadLbl').textContent = dots[di++ % dots.length]; }, 900);
   const ab = aboutThem ? `Context about them: ${aboutThem}.` : '';
   try {
-    const r = await fetch('https://rizz-coach-server.onrender.com/coach', {
+    const r = await fetch('/coach', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
