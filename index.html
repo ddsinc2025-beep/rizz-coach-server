@@ -92,10 +92,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .sh-div{height:.5px;background:rgba(60,60,67,.1);margin:0 -16px}
 
 /* MODES */
-.mode-row{display:flex;gap:6px;overflow-x:auto;padding:2px 0}
-.mode-row::-webkit-scrollbar{height:0}
-.mpill{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:13px;font-weight:600;background:var(--bg);color:var(--label2);border:none;cursor:pointer;transition:all .18s;font-family:-apple-system,sans-serif}
-.mpill.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(0,122,255,.3)}
+.mode-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:2px 0}
+.mpill{padding:8px 6px;border-radius:14px;font-size:12px;font-weight:700;background:var(--bg);color:var(--label2);border:1.5px solid transparent;cursor:pointer;font-family:-apple-system,sans-serif;text-align:center;line-height:1.3;transition:transform .12s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden;}
+.mpill::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .1s;}
+.mpill:active::after{background:rgba(0,0,0,0.08);}
+.mpill:active{transform:scale(0.88);}
+.mpill.active{background:var(--blue);color:#fff;border-color:rgba(0,122,255,.3);box-shadow:0 3px 10px rgba(0,122,255,.35);transform:scale(1.05);}
+.mpill.active:active{transform:scale(0.96);}
+.mpill-emoji{display:block;font-size:18px;margin-bottom:2px;}
+.mpill-label{display:block;font-size:10px;font-weight:700;letter-spacing:-.1px;}
 
 /* UPLOAD */
 .upload-btn{width:100%;background:var(--bg);border:1.5px dashed var(--bg4);border-radius:14px;padding:13px 14px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;color:var(--label2);font-size:14px;font-weight:600;font-family:-apple-system,sans-serif;transition:all .18s}
@@ -338,16 +343,17 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
     <div class="sh-body" id="shBody">
       <div class="sh-inner">
-        <div class="mode-row">
-          <button class="mpill active" data-mode="flirty"   onclick="setMode(this)">💋 Flirty</button>
-          <button class="mpill"        data-mode="playful"  onclick="setMode(this)">😄 Playful</button>
-          <button class="mpill"        data-mode="deep"     onclick="setMode(this)">🌙 Deep</button>
-          <button class="mpill"        data-mode="serious"  onclick="setMode(this)">💍 Serious</button>
-          <button class="mpill"        data-mode="business" onclick="setMode(this)">💼 Business</button>
-          <button class="mpill"        data-mode="petty"    onclick="setMode(this)">💅 Being Petty</button>
-          <button class="mpill"        data-mode="comeback" onclick="setMode(this)">🔥 Clap Back</button>
-          <button class="mpill"        data-mode="roast"    onclick="setMode(this)">😂 Roast/Jokes</button>
-          <button class="mpill"        data-mode="beef"     onclick="setMode(this)">😤 Talking Shit</button>
+        <div class="mode-grid">
+          <button class="mpill active" data-mode="roast"    onclick="setMode(this)"><span class="mpill-emoji">😂</span><span class="mpill-label">Roast</span></button>
+          <button class="mpill"        data-mode="beef"     onclick="setMode(this)"><span class="mpill-emoji">😤</span><span class="mpill-label">Talking Shit</span></button>
+          <button class="mpill"        data-mode="comeback" onclick="setMode(this)"><span class="mpill-emoji">🔥</span><span class="mpill-label">Clap Back</span></button>
+          <button class="mpill"        data-mode="petty"    onclick="setMode(this)"><span class="mpill-emoji">💅</span><span class="mpill-label">Being Petty</span></button>
+          <button class="mpill"        data-mode="business" onclick="setMode(this)"><span class="mpill-emoji">💼</span><span class="mpill-label">Business</span></button>
+          <button class="mpill"        data-mode="flirty"   onclick="setMode(this)"><span class="mpill-emoji">💋</span><span class="mpill-label">Flirty</span></button>
+          <button class="mpill"        data-mode="playful"  onclick="setMode(this)"><span class="mpill-emoji">😄</span><span class="mpill-label">Playful</span></button>
+          <button class="mpill"        data-mode="deep"     onclick="setMode(this)"><span class="mpill-emoji">🌙</span><span class="mpill-label">Deep</span></button>
+          <button class="mpill"        data-mode="serious"  onclick="setMode(this)"><span class="mpill-emoji">💍</span><span class="mpill-label">Serious</span></button>
+          <button class="mpill"        data-mode="casual"   onclick="setMode(this)"><span class="mpill-emoji">😎</span><span class="mpill-label">Casual</span></button>
         </div>
         <div class="sh-div"></div>
         <input type="file" id="fileIn" accept="image/*" onchange="handleImg(event)">
@@ -503,7 +509,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 // Direct API calls with user's stored key
 let apiKey = localStorage.getItem('rc_key') || '';
 let aboutThem = localStorage.getItem('rc_about') || '';
-let mode = 'flirty';
+let mode = 'roast';
 let selText = '';
 let history = JSON.parse(localStorage.getItem('rc_hist') || '[]');
 let starVal = 0;
@@ -515,6 +521,7 @@ const MODES = {
   playful:  'Suggest 3 replies: one witty banter, one funny tease, one fun question.',
   deep:     'Suggest 3 replies: one thoughtful & genuine, one showing vulnerability, one with a meaningful question.',
   serious:  'Suggest 3 replies: one warm & honest, one showing real interest, one nudging toward plans.',
+  casual:   'Suggest 3 replies: one chill & low-key, one funny, one easy-going question.',
   business: 'Suggest 3 professional replies for a business conversation: one assertive & direct, one diplomatic & strategic, one confident & solution-focused. Keep them professional but firm.',
   petty:    'Suggest 3 petty but clever replies: one subtle shade, one unbothered & dismissive, one that hits different without being too obvious. Petty but smart, not aggressive.',
   comeback: 'Suggest 3 savage clap back replies: one quick & sharp, one that exposes them, one that shuts it down completely. Witty and cutting but not vulgar.',
