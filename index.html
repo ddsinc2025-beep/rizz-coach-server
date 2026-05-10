@@ -282,12 +282,12 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div class="ob-hero">
     <div class="ob-icon">⚡</div>
     <div class="ob-title">Rizz Coach</div>
-    <div class="ob-sub">Your AI wingman for every text conversation</div>
+    <div class="ob-sub">Your AI wingman for any conversation — dating, business, clapping back & more</div>
   </div>
   <div class="ob-features">
-    <div class="ob-row"><div class="ob-fi" style="background:rgba(255,45,85,.12)">🧠</div><div><div class="ob-fl">Reads the vibe</div><div class="ob-fd">Instantly analyzes their tone & interest level</div></div></div>
+    <div class="ob-row"><div class="ob-fi" style="background:rgba(255,45,85,.12)">🧠</div><div><div class="ob-fl">Reads any situation</div><div class="ob-fd">Dating, business, beef, comebacks — we got you</div></div></div>
     <div class="ob-row"><div class="ob-fi" style="background:rgba(0,122,255,.12)">💬</div><div><div class="ob-fl">3 ready-to-send replies</div><div class="ob-fd">Pick one, copy it, send — works on any app</div></div></div>
-    <div class="ob-row"><div class="ob-fi" style="background:rgba(52,199,89,.12)">📱</div><div><div class="ob-fl">Works everywhere</div><div class="ob-fd">iMessage, WhatsApp, Instagram, Tinder & more</div></div></div>
+    <div class="ob-row"><div class="ob-fi" style="background:rgba(52,199,89,.12)">🔥</div><div><div class="ob-fl">Every conversation type</div><div class="ob-fd">Flirty, petty, business, roasts, clap backs & more</div></div></div>
   </div>
   <button class="ob-btn" onclick="startApp()">Get Started →</button>
 </div>
@@ -322,10 +322,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="empty" id="emptyState">
       <div class="empty-icon">⚡</div>
       <div class="empty-title">Ready to Coach You</div>
-      <div class="empty-sub">Paste or screenshot a message below and get 3 perfect replies instantly</div>
+      <div class="empty-sub">Dating, business, petty, comebacks — paste any message and get 3 perfect replies</div>
       <div class="empty-steps">
-        <div class="e-step"><span>1</span>Upload a screenshot or paste their text</div>
-        <div class="e-step"><span>2</span>Pick your vibe — Flirty, Playful, Deep…</div>
+        <div class="e-step"><span>1</span>Pick your mode — Flirty, Business, Petty…</div>
+        <div class="e-step"><span>2</span>Upload a screenshot or paste their text</div>
         <div class="e-step"><span>3</span>Choose a reply and send it</div>
       </div>
     </div>
@@ -339,11 +339,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="sh-body" id="shBody">
       <div class="sh-inner">
         <div class="mode-row">
-          <button class="mpill active" data-mode="flirty"  onclick="setMode(this)">💋 Flirty</button>
-          <button class="mpill"        data-mode="playful" onclick="setMode(this)">😄 Playful</button>
-          <button class="mpill"        data-mode="deep"    onclick="setMode(this)">🌙 Deep</button>
-          <button class="mpill"        data-mode="casual"  onclick="setMode(this)">😎 Casual</button>
-          <button class="mpill"        data-mode="serious" onclick="setMode(this)">💍 Serious</button>
+          <button class="mpill active" data-mode="flirty"   onclick="setMode(this)">💋 Flirty</button>
+          <button class="mpill"        data-mode="playful"  onclick="setMode(this)">😄 Playful</button>
+          <button class="mpill"        data-mode="deep"     onclick="setMode(this)">🌙 Deep</button>
+          <button class="mpill"        data-mode="serious"  onclick="setMode(this)">💍 Serious</button>
+          <button class="mpill"        data-mode="business" onclick="setMode(this)">💼 Business</button>
+          <button class="mpill"        data-mode="petty"    onclick="setMode(this)">💅 Being Petty</button>
+          <button class="mpill"        data-mode="comeback" onclick="setMode(this)">🔥 Clap Back</button>
+          <button class="mpill"        data-mode="roast"    onclick="setMode(this)">😂 Roast/Jokes</button>
+          <button class="mpill"        data-mode="beef"     onclick="setMode(this)">😤 Talking Shit</button>
         </div>
         <div class="sh-div"></div>
         <input type="file" id="fileIn" accept="image/*" onchange="handleImg(event)">
@@ -507,11 +511,15 @@ let sheetOpen = false;
 let deferredInstall = null;
 
 const MODES = {
-  flirty:  'Suggest 3 replies: one bold & flirty, one smooth & charming, one playful tease.',
-  playful: 'Suggest 3 replies: one witty banter, one funny tease, one fun question.',
-  deep:    'Suggest 3 replies: one thoughtful & genuine, one showing vulnerability, one with a meaningful question.',
-  casual:  'Suggest 3 replies: one chill & low-key, one funny, one easy-going question.',
-  serious: 'Suggest 3 replies: one warm & honest, one showing real interest, one nudging toward plans.',
+  flirty:   'Suggest 3 replies: one bold & flirty, one smooth & charming, one playful tease.',
+  playful:  'Suggest 3 replies: one witty banter, one funny tease, one fun question.',
+  deep:     'Suggest 3 replies: one thoughtful & genuine, one showing vulnerability, one with a meaningful question.',
+  serious:  'Suggest 3 replies: one warm & honest, one showing real interest, one nudging toward plans.',
+  business: 'Suggest 3 professional replies for a business conversation: one assertive & direct, one diplomatic & strategic, one confident & solution-focused. Keep them professional but firm.',
+  petty:    'Suggest 3 petty but clever replies: one subtle shade, one unbothered & dismissive, one that hits different without being too obvious. Petty but smart, not aggressive.',
+  comeback: 'Suggest 3 savage clap back replies: one quick & sharp, one that exposes them, one that shuts it down completely. Witty and cutting but not vulgar.',
+  roast:    'Suggest 3 funny roast/joke replies: one clever joke at their expense, one self-aware funny comeback, one hilarious burn that makes everyone laugh. Keep it funny not mean.',
+  beef:     'Suggest 3 replies for when you are in an argument or talking shit: one that holds your ground firmly, one that exposes their BS, one that ends the conversation on top. Confident and unafraid.',
 };
 
 // ── INSTALL ──
