@@ -141,7 +141,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .img-prev-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);color:#fff;font-size:12px;font-weight:600;padding:7px 12px;display:flex;align-items:center;justify-content:space-between}
 .img-clear{cursor:pointer;font-size:16px}
 
-/* OR */
+/* CONVO TOGGLE */
+.convo-toggle{display:flex;background:var(--bg2);border-radius:12px;padding:3px;gap:3px;margin-bottom:10px;}
+.ctog{flex:1;padding:8px 6px;border-radius:9px;border:none;font-size:12px;font-weight:700;font-family:-apple-system,sans-serif;cursor:pointer;transition:all .18s;color:var(--label2);background:transparent;-webkit-user-select:none;user-select:none;}
+.ctog.active{background:#fff;color:var(--label);box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.ctog-emoji{font-size:14px;margin-right:4px;}
 .or-div{display:flex;align-items:center;gap:10px}
 .or-line{flex:1;height:.5px;background:var(--bg3)}
 .or-txt{font-size:12px;color:var(--label3);font-weight:600;letter-spacing:.5px}
@@ -414,23 +418,31 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
           <button class="mpill"        data-mode="casual"   onclick="setMode(this)"><span class="mpill-emoji">😎</span><span class="mpill-label">Casual</span></button>
         </div>
         <div class="sh-div"></div>
-        <input type="file" id="fileIn" accept="image/*" onchange="handleImg(event)">
-        <div class="upload-btn" onclick="document.getElementById('fileIn').click()">
-          <span style="font-size:20px">📸</span><span>Upload screenshot of their text</span>
+        <!-- CONVO TOGGLE -->
+        <div class="convo-toggle">
+          <button class="ctog active" id="togReact" onclick="setConvoMode('react')"><span class="ctog-emoji">⚡</span>React to theirs</button>
+          <button class="ctog" id="togStart" onclick="setConvoMode('start')"><span class="ctog-emoji">✉️</span>Start a conversation</button>
         </div>
-        <div class="img-prev" id="imgPrev">
-          <img id="prevImg" src="" alt="">
-          <div class="img-prev-bar">
-            <span id="imgStatus">🔍 Reading text…</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <button onclick="analyze()" style="background:var(--blue);border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-              </button>
-              <span class="img-clear" onclick="clearImg()">✕</span>
+        <input type="file" id="fileIn" accept="image/*" onchange="handleImg(event)">
+        <!-- React mode upload (hidden in start mode) -->
+        <div id="reactOnly">
+          <div class="upload-btn" onclick="document.getElementById('fileIn').click()">
+            <span style="font-size:20px">📸</span><span>Upload screenshot of their text</span>
+          </div>
+          <div class="img-prev" id="imgPrev">
+            <img id="prevImg" src="" alt="">
+            <div class="img-prev-bar">
+              <span id="imgStatus">🔍 Reading text…</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button onclick="analyze()" style="background:var(--blue);border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+                <span class="img-clear" onclick="clearImg()">✕</span>
+              </div>
             </div>
           </div>
+          <div class="or-div"><div class="or-line"></div><div class="or-txt">OR TYPE / PASTE</div><div class="or-line"></div></div>
         </div>
-        <div class="or-div"><div class="or-line"></div><div class="or-txt">OR TYPE / PASTE</div><div class="or-line"></div></div>
         <div class="inp-wrap">
           <textarea id="msgIn" placeholder="Paste their message here…" rows="2"></textarea>
           <button class="go-btn" id="goBtn" onclick="analyze()">
@@ -595,6 +607,48 @@ const MODES = {
   beef:     'Suggest 3 replies for when you are in an argument or talking shit: one that holds your ground firmly, one that exposes their BS, one that ends the conversation on top. Confident and unafraid.',
 };
 
+const START_MODES = {
+  flirty:   'Generate 3 flirty opening messages to start a conversation: one bold & confident opener, one smooth & intriguing line, one playful question that gets them talking.',
+  playful:  'Generate 3 fun playful openers to start a conversation: one funny & witty opener, one lighthearted tease, one fun question they can\'t resist answering.',
+  deep:     'Generate 3 thoughtful openers to start a meaningful conversation: one genuine & curious opener, one that shows real interest, one deep question that sparks real connection.',
+  serious:  'Generate 3 sincere openers to start a serious conversation: one warm & direct opener, one that shows genuine interest, one that naturally leads toward meeting up.',
+  casual:   'Generate 3 chill casual openers to start a conversation: one low-key friendly opener, one funny & laid back line, one easy question to get things going.',
+  business: 'Generate 3 professional openers to start a business conversation: one confident & direct intro, one value-driven opener, one that builds rapport while staying professional.',
+  petty:    'Generate 3 petty but clever conversation starters: one subtle power move opener, one unbothered & cool line, one that puts you in control from the jump.',
+  comeback: 'Generate 3 bold confident openers to start a conversation with someone who may have wronged you or gone cold: one direct & unflinching opener, one that shows you\'re unbothered, one that puts the ball in their court.',
+  roast:    'Generate 3 funny roast-style openers to start a conversation: one hilarious self-aware line, one playful jab that\'s flirty, one funny opener that breaks the ice instantly.',
+  beef:     'Generate 3 bold openers to start a confrontational or assertive conversation: one that commands respect immediately, one that makes your position clear, one that\'s firm but leaves room for dialogue.',
+};
+
+let convoMode = 'react'; // 'react' or 'start'
+
+// ── CONVO MODE TOGGLE ──
+function setConvoMode(m) {
+  convoMode = m;
+  document.getElementById('togReact').classList.toggle('active', m === 'react');
+  document.getElementById('togStart').classList.toggle('active', m === 'start');
+  const reactOnly = document.getElementById('reactOnly');
+  const msgIn = document.getElementById('msgIn');
+  const repWrap = document.getElementById('repWrap');
+  const vibeCard = document.getElementById('vibeCard');
+  const sendBar = document.getElementById('sendBar');
+
+  // reset results
+  hide('vibeCard'); hide('repWrap'); hide('sendBar'); hide('successDiv');
+
+  if (m === 'start') {
+    reactOnly.style.display = 'none';
+    msgIn.placeholder = 'Describe who you\'re texting or the situation… e.g. "Girl I met at the gym" or "Old client I want to reconnect with"';
+    msgIn.value = '';
+    document.getElementById('shSub').textContent = 'Generate an opening message';
+  } else {
+    reactOnly.style.display = 'block';
+    msgIn.placeholder = 'Paste their message here…';
+    msgIn.value = '';
+    document.getElementById('shSub').textContent = 'Tap to get reply suggestions';
+  }
+}
+
 // ── INSTALL ──
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredInstall = e;
@@ -689,10 +743,19 @@ async function analyze() {
   if (!apiKey) { showSettings(); showToast('⚙️ Add your API key first'); return; }
   document.getElementById('goBtn').disabled = true;
   hide('vibeCard'); hide('repWrap'); hide('sendBar'); hide('successDiv'); show('loadRow');
-  const dots = ['Reading the vibes…', 'Decoding their energy…', 'Crafting replies…', 'Almost ready…'];
+
+  const isStart = convoMode === 'start';
+  const dots = isStart
+    ? ['Thinking of the perfect opener…', 'Crafting your first move…', 'Almost ready…']
+    : ['Reading the vibes…', 'Decoding their energy…', 'Crafting replies…', 'Almost ready…'];
   let di = 0;
   const dt = setInterval(() => { document.getElementById('loadLbl').textContent = dots[di++ % dots.length]; }, 900);
-  const ab = aboutThem ? `Context about them: ${aboutThem}.` : '';
+  const ab = aboutThem ? `Context: ${aboutThem}.` : '';
+
+  const prompt = isStart
+    ? `You are a conversation coach helping someone start a conversation. Situation: "${msg}"\n${ab}\n${START_MODES[mode]}\nRespond ONLY with valid JSON (no markdown):\n{"vibeScore":8,"vibeTags":["opening","starter","${mode}"],"analysis":"<1 sentence tip for starting this conversation>","replies":[{"label":"<2-word label>","text":"<opening message max 2 sentences>"},{"label":"<label>","text":"<opener>"},{"label":"<label>","text":"<opener>"}]}`
+    : `You are a conversation coach. Someone received this text: "${msg}"\n${ab}\n${MODES[mode]}\nRespond ONLY with valid JSON (no markdown):\n{"vibeScore":<1-10>,"vibeTags":["tag1","tag2","tag3"],"analysis":"<1-2 sentence honest read of their tone and interest>","replies":[{"label":"<2-word label>","text":"<natural reply max 2 sentences>"},{"label":"<label>","text":"<reply>"},{"label":"<label>","text":"<reply>"}]}`;
+
   try {
     const r = await fetch('/coach', {
       method: 'POST',
@@ -700,16 +763,14 @@ async function analyze() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
-        messages: [{ role: 'user', content:
-          `You are a dating conversation coach. Someone received this text: "${msg}"\n${ab}\n${MODES[mode]}\nRespond ONLY with valid JSON (no markdown):\n{"vibeScore":<1-10>,"vibeTags":["tag1","tag2","tag3"],"analysis":"<1-2 sentence honest read of their tone and interest>","replies":[{"label":"<2-word label>","text":"<natural reply max 2 sentences>"},{"label":"<label>","text":"<reply>"},{"label":"<label>","text":"<reply>"}]}`
-        }]
+        messages: [{ role: 'user', content: prompt }]
       })
     });
     const d = await r.json();
     if (d.error) throw new Error(d.error.message);
     const parsed = JSON.parse((d.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim());
     clearInterval(dt); hide('loadRow');
-    renderResults(parsed, msg);
+    renderResults(parsed, msg, isStart);
   } catch (err) {
     clearInterval(dt); hide('loadRow');
     document.getElementById('goBtn').disabled = false;
@@ -717,10 +778,10 @@ async function analyze() {
   }
 }
 
-function renderResults(d, origMsg) {
-  addBubble('them', origMsg);
+function renderResults(d, origMsg, isStart = false) {
+  if (!isStart) addBubble('them', origMsg);
   const s = Math.min(10, Math.max(1, d.vibeScore || 5));
-  document.getElementById('vsNum').textContent = s;
+  document.getElementById('vsNum').textContent = isStart ? '🚀' : s;
   document.getElementById('vsText').textContent = d.analysis || '';
   const te = document.getElementById('vsTags'); te.innerHTML = '';
   (d.vibeTags || []).forEach(t => te.innerHTML += `<div class="vtag">${t}</div>`);
@@ -734,6 +795,7 @@ function renderResults(d, origMsg) {
     card.onclick = () => pickReply(rep.text, card); rc.appendChild(card);
   });
   show('repWrap');
+  document.querySelector('.rep-hdr').textContent = isStart ? 'Choose your opener' : 'Choose your reply';
   document.getElementById('shSub').textContent = 'Pick your reply 👇';
   document.getElementById('shBody').scrollTo({ top: 300, behavior: 'smooth' });
   saveHist(origMsg, s, d.vibeTags || [], d.replies || []);
