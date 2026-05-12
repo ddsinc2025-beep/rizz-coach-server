@@ -72,7 +72,12 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .empty-title{font-size:20px;font-weight:800;color:#1C1C1E;letter-spacing:-.5px}
 .empty-sub{font-size:14px;color:#6C6C70;line-height:1.5;max-width:260px}
 .empty-steps{margin-top:6px;width:100%;display:flex;flex-direction:column;gap:8px}
-.e-step{background:#fff;border-radius:12px;padding:11px 14px;font-size:13px;color:#1C1C1E;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+/* STEP LABELS */
+.step-badge{font-size:10px;font-weight:800;color:#5B5FFF;background:rgba(91,95,255,.1);padding:2px 8px;border-radius:8px;margin-left:4px;letter-spacing:.3px;vertical-align:middle;}
+.step-arrow-row{display:flex;align-items:center;gap:6px;padding:6px 0 2px;}
+.step-num-lbl{font-size:10px;font-weight:800;color:#5B5FFF;letter-spacing:.4px;text-transform:uppercase;}
+.step-arrow-down{font-size:14px;color:#5B5FFF;animation:stepBounce .8s ease-in-out infinite alternate;}
+@keyframes stepBounce{from{transform:translateY(0)}to{transform:translateY(3px)}}
 .e-step span{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#5B5FFF,#A855F7);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .brow{display:flex;align-items:flex-end;gap:6px;margin:1px 0}
 .brow.me{flex-direction:row-reverse}
@@ -113,6 +118,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* GENIE ENTRY */
 .genie-entry{position:relative;display:flex;align-items:center;padding:0 18px;height:96px;border:none;border-radius:20px;cursor:pointer;transition:all .22s cubic-bezier(.34,1.2,.64,1);flex-shrink:0;margin:8px 14px 0;-webkit-user-select:none;user-select:none;overflow:visible;box-shadow:0 6px 28px rgba(0,0,0,.45);isolation:isolate;}
 .genie-entry:active{transform:scale(.96);}
+/* COLLAPSED GENIE BAR */
+.genie-collapsed{display:flex;align-items:center;margin:6px 14px 0;border-radius:14px;overflow:hidden;cursor:pointer;-webkit-user-select:none;user-select:none;background:linear-gradient(135deg,#000,#3d0070,#000);background-size:200% 200%;animation:genieGradShift 4s ease infinite;box-shadow:0 3px 14px rgba(0,0,0,.4);transition:transform .15s;}
+.genie-collapsed:active{transform:scale(.97);}
+.gc-inner{display:flex;align-items:center;gap:10px;padding:10px 14px;width:100%;}
+.gc-avatar-mini{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.5);box-shadow:0 0 10px rgba(168,85,247,.6);background:#2a0050;flex-shrink:0;overflow:hidden;}
+.gc-avatar-mini img{width:100%;height:100%;object-fit:cover;object-position:center top;}
+.gc-txt{flex:1;font-size:14px;font-weight:800;color:#fff;letter-spacing:-.2px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+.gc-tag{font-size:9px;font-weight:800;color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:3px 8px;letter-spacing:.5px;}
 
 /* dark base */
 .genie-entry-bg{position:absolute;inset:0;background:linear-gradient(135deg,#000000,#7B2FBE,#000000);background-size:200% 200%;animation:genieGradShift 4s ease infinite;z-index:0;border-radius:20px;overflow:hidden;}
@@ -491,8 +504,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="proto-badge">⚡ PROTOTYPE</div>
     <div class="proto-txt">Early access · Your feedback shapes this app</div>
   </div>
-  <!-- GENIE ENTRY POINT -->
-  <div class="genie-entry" onclick="showGenie()">
+  <!-- GENIE ENTRY POINT — collapsible -->
+  <div class="genie-collapsed" id="genieCollapsed" onclick="showGenie()">
+    <div class="gc-inner">
+      <div class="gc-avatar-mini" id="gcAvatarMini"></div>
+      <div class="gc-txt">🔮 Ask the Genie</div>
+      <div class="gc-tag">TAP</div>
+    </div>
+  </div>
+  <div class="genie-entry" id="genieEntryFull" style="display:none;" onclick="showGenie()">
     <div class="genie-entry-bg"></div>
     <!-- scrolling question pattern -->
     <div class="genie-qs">
@@ -527,35 +547,30 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       <div class="empty-icon">⚡</div>
       <div class="empty-title">Ready to Coach You</div>
       <div class="empty-sub">Dating, business, petty, comebacks — paste any message and get 3 perfect replies</div>
-      <div class="empty-steps">
-        <div style="font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">How to use</div>
-        <div class="e-step"><span>1</span>Pick your mode — Flirty, Business, Petty…</div>
-        <div class="e-step"><span>2</span>Upload a screenshot or paste their text</div>
-        <div class="e-step"><span>3</span>Choose a reply and send it</div>
-      </div>
+
     </div>
   </div>
   <div class="sheet" id="sheet">
     <div class="sh-handle" onclick="toggleSheet()"></div>
     <div class="sh-tab" onclick="toggleSheet()">
-      <div class="sh-brand"><div class="sh-icon">⚡</div><div><div class="sh-title">Rizz Coach <span style="font-size:11px;font-weight:700;color:var(--blue);background:rgba(0,122,255,.1);padding:2px 8px;border-radius:8px;margin-left:4px;letter-spacing:.3px;">Pick Your Mode</span></div><div class="sh-sub" id="shSub">Tap to get reply suggestions</div></div></div>
+      <div class="sh-brand"><div class="sh-icon">⚡</div><div><div class="sh-title">Rizz Coach <span class="step-badge">STEP 1 · Pick Your Mood</span></div><div class="sh-sub" id="shSub">Tap to get reply suggestions</div></div></div>
       <div class="sh-chev" id="shChev">⌃</div>
     </div>
     <div class="sh-body" id="shBody">
       <div class="sh-inner">
         <div class="mode-grid">
-          <button class="mpill active" data-mode="roast"    onclick="setMode(this)"><span class="mpill-emoji">😂</span><span class="mpill-label">Roast</span></button>
+          <button class="mpill" data-mode="roast"    onclick="setMode(this)"><span class="mpill-emoji">😂</span><span class="mpill-label">Roast</span></button>
           <button class="mpill"        data-mode="beef"     onclick="setMode(this)"><span class="mpill-emoji">😤</span><span class="mpill-label">Talking Shit</span></button>
           <button class="mpill"        data-mode="comeback" onclick="setMode(this)"><span class="mpill-emoji">🔥</span><span class="mpill-label">Clap Back</span></button>
           <button class="mpill"        data-mode="petty"    onclick="setMode(this)"><span class="mpill-emoji">💅</span><span class="mpill-label">Being Petty</span></button>
           <button class="mpill"        data-mode="business" onclick="setMode(this)"><span class="mpill-emoji">💼</span><span class="mpill-label">Business</span></button>
-          <button class="mpill"        data-mode="flirty"   onclick="setMode(this)"><span class="mpill-emoji">💋</span><span class="mpill-label">Flirty</span></button>
+          <button class="mpill active" data-mode="flirty"   onclick="setMode(this)"><span class="mpill-emoji">💋</span><span class="mpill-label">Flirty</span></button>
           <button class="mpill"        data-mode="playful"  onclick="setMode(this)"><span class="mpill-emoji">😄</span><span class="mpill-label">Playful</span></button>
           <button class="mpill"        data-mode="deep"     onclick="setMode(this)"><span class="mpill-emoji">🌙</span><span class="mpill-label">Deep</span></button>
           <button class="mpill"        data-mode="serious"  onclick="setMode(this)"><span class="mpill-emoji">💍</span><span class="mpill-label">Serious</span></button>
           <button class="mpill"        data-mode="casual"   onclick="setMode(this)"><span class="mpill-emoji">😎</span><span class="mpill-label">Casual</span></button>
         </div>
-        <div class="sh-div"></div>
+        <div class="step-arrow-row"><span class="step-num-lbl">STEP 2 · Pick Your Convo</span><span class="step-arrow-down">↓</span></div>
         <!-- CONVO TOGGLE -->
         <div class="convo-toggle">
           <div class="ctog-indicator" id="ctogIndicator"></div>
@@ -570,12 +585,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
             <span class="ctog-sub">GENERATE OPENER</span>
           </button>
         </div>
-        <!-- ACTIVE MODE BANNER -->
+        <!-- ACTIVE MODE BANNER + STEP 3 -->
         <div class="mode-banner" id="modeBanner">
           <span class="mode-banner-icon" id="modeBannerIcon">😂</span>
           <span class="mode-banner-txt" id="modeBannerTxt">Roast mode active</span>
           <span class="mode-banner-badge" id="modeBannerBadge">REACTING</span>
         </div>
+        <div class="step-arrow-row"><span class="step-num-lbl">STEP 3 · Upload Screenshot or Type / Copy &amp; Paste Below</span><span class="step-arrow-down">↓</span></div>
         <input type="file" id="fileIn" accept="image/*" onchange="handleImg(event)">
         <!-- React mode upload (hidden in start mode) -->
         <div id="reactOnly">
@@ -856,7 +872,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 // Direct API calls with user's stored key
 let apiKey = ''; // key lives on the server — users don't need one
 let aboutThem = localStorage.getItem('rc_about') || '';
-let mode = 'roast';
+let mode = 'flirty';
 let selText = '';
 let history = JSON.parse(localStorage.getItem('rc_hist') || '[]');
 let starVal = 0;
@@ -917,7 +933,6 @@ function setConvoMode(m) {
     document.getElementById('shSub').textContent = 'Tap to get reply suggestions';
   }
   updateModeBanner();
-  // Auto-reanalyze if memory exists
   if (hasAnalyzedOnce && (lastMsg || lastImgB64)) analyze();
 }
 
@@ -946,6 +961,11 @@ window.addEventListener('load', () => {
   pruneOldHistory();
   history = getHistory();
   startGeniePopQs();
+  // init step 1 as done (roast is default)
+  // copy genie avatar to mini bar
+  const bigImg = document.querySelector('.genie-entry-icon img');
+  const miniBar = document.getElementById('gcAvatarMini');
+  if (bigImg && miniBar) miniBar.innerHTML = `<img src="${bigImg.src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
   // 🔥 Wake up Render server immediately on load
   fetch('/coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1, messages: [{ role: 'user', content: 'hi' }] }) }).catch(() => {});
   const p = new URLSearchParams(window.location.search);
@@ -995,10 +1015,7 @@ function setMode(el) {
   el.classList.add('active');
   mode = el.dataset.mode;
   updateModeBanner();
-  // Auto-reanalyze if we have a previous message in memory
-  if (hasAnalyzedOnce && (lastMsg || lastImgB64)) {
-    analyze();
-  }
+  if (hasAnalyzedOnce && (lastMsg || lastImgB64)) analyze();
 }
 
 // ── SCREENSHOT UPLOAD ──
@@ -1608,27 +1625,36 @@ async function askGenie() {
   chat.scrollTop = chat.scrollHeight;
 
   const contextMsg = lastMsg ? `The user is dealing with this conversation: "${lastMsg}". ` : '';
-  try {
-    const r = await fetch('/coach', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 500,
-        messages: [{ role: 'user', content:
-          `You are a mystical all-knowing Genie who specializes in conversation and relationship advice. Speak with wisdom, warmth and a hint of mysticism. Keep answers concise (2-3 sentences max). ${contextMsg}The user asks: "${q}"`
-        }]
-      })
-    });
-    const d = await r.json();
-    const ans = (d.content?.[0]?.text || '').trim();
-    loadDiv.className = 'genie-msg genie';
-    loadDiv.textContent = ans || 'The Genie is momentarily speechless… try again.';
-  } catch {
-    loadDiv.className = 'genie-msg genie';
-    loadDiv.textContent = '✨ The Genie needs a moment — check your connection and try again.';
-  }
-  chat.scrollTop = chat.scrollHeight;
+  const prompt = `You are a mystical all-knowing Genie who specializes in conversation and relationship advice. Speak with wisdom, warmth and a hint of mysticism. Keep answers concise (2-3 sentences max). ${contextMsg}The user asks: "${q}" End your response with: So Say's the Great Father Big Viz 🔮`;
+
+  const tryAsk = async (attempt) => {
+    try {
+      const r = await fetch('/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const d = await r.json();
+      const ans = (d.content?.[0]?.text || '').trim();
+      loadDiv.className = 'genie-msg genie';
+      loadDiv.textContent = ans || 'The stars are unclear… ask again. 🔮 So Say\'s the Great Father Big Viz';
+    } catch {
+      if (attempt < 2) {
+        loadDiv.textContent = '⏳ The Genie is waking up… one moment…';
+        await new Promise(res => setTimeout(res, 4000));
+        return tryAsk(attempt + 1);
+      }
+      loadDiv.className = 'genie-msg genie';
+      loadDiv.textContent = '⏳ The Genie is resting — try again in 30 seconds. 🔮 So Say\'s the Great Father Big Viz';
+    }
+    chat.scrollTop = chat.scrollHeight;
+  };
+
+  await tryAsk(0);
 }
 
 // ── HISTORY SYSTEM ──
